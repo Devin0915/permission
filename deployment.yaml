@@ -1,0 +1,40 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: pmweb
+  namespace: permission
+  labels:
+    app: pmweb
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: pmweb
+  template:
+    metadata:
+      labels:
+        app: pmweb
+    spec:
+      containers:
+        - name: pmweb
+          imagePullPolicy: Always
+          image: harbor.patozon.net/library/web/pmweb:{{ build.tag }}
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: permission
+  name: pmweb
+  labels:
+    app: pmweb
+spec:
+  ports:
+    - port: 80
+      name: http
+      targetPort: 80
+      protocol: TCP
+  selector:
+    app: pmweb
+
